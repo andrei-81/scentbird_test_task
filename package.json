@@ -1,0 +1,14 @@
+{
+  "name": "scentbird",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.26"
+  }
+}
