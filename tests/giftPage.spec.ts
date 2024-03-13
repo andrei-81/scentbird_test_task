@@ -1,10 +1,11 @@
-import {Request, expect, test} from '@playwright/test'
+import {Page, Request, expect, test} from '@playwright/test'
 import { giftSubscriptionPageUrl, modifyCartApiUrl } from '../helpers/urls'
 import { GiftSubscriptionPage } from '../pages/giftSubscriptionPage'
 import { ScentType, SendDateTestId } from '../helpers/enums';
 import { GiftSubscriptionFormData } from '../helpers/GiftSubscriptionFormData';
-import { dateErrorTestId, emailErrorTestId, nameErrorTestId } from '../helpers/dataTestIds';
+import { dateErrorTestId, emailErrorTestId, femaleRadioButton, nameErrorTestId } from '../helpers/dataTestIds';
 import { faker } from '@faker-js/faker';
+import { createAccountLabel } from '../helpers/locators';
 
 
 var subscriptionPage: GiftSubscriptionPage;
@@ -20,7 +21,9 @@ test.beforeEach(async({page}) => {
 test('should show error for empty required fields', async ({page}) => {
     const dataToSend = new GiftSubscriptionFormData(); 
     await subscriptionPage.fillOutPageAndClickPay(dataToSend);
-    await page.waitForTimeout(500) //to render errors
+    // 
+    await page.waitForSelector(`[data-testid="${nameErrorTestId}"]`);
+    // await page.waitForTimeout(500) //to render errors
     const nameError = await page.getByTestId(nameErrorTestId);
     const emailError = await page.getByTestId(emailErrorTestId);
 
@@ -33,7 +36,9 @@ test('should show error for the invalid email', async ({page}) => {
         .setRecipientName(faker.person.firstName())
         .setRecipientEmail(faker.internet.email().replace("@", "-")); 
     await subscriptionPage.fillOutPageAndClickPay(dataToSend);
-    await page.waitForTimeout(500) //to render error
+    // 
+    await page.waitForSelector(`[data-testid="${emailErrorTestId}"]`);
+    // await page.waitForTimeout(500) //to render error
     const emailError = await page.getByTestId(emailErrorTestId);
 
     expect(emailError).toHaveText("Valid email address required")
@@ -45,9 +50,11 @@ test('should show error for the wrong date', async ({page}) => {
         .setRecipientName(faker.person.fullName())
         .setRecipientEmail(faker.internet.email())
         .setSendDate(SendDateTestId.sendLater)
-        .setDateToSend(`${currentYear}-1-1`);  //will not work at January 1st
+        .setDateToSend(getFutureDate(-2)); 
     await subscriptionPage.fillOutPageAndClickPay(dataToSend);
-    await page.waitForTimeout(500) //to render error
+    // 
+    await page.waitForSelector(`[data-testid="${dateErrorTestId}"]`);
+    // await page.waitForTimeout(500); //to render error
     const dateError = await page.getByTestId(dateErrorTestId);
 
     expect(dateError).toHaveText("Date must be in the future")
@@ -62,6 +69,7 @@ test('should pass with required fields only', async ({page, baseURL}) => {
 
     expect(formApiResponse.status()).toBe(200);
     assertApiRequest(dataToSend, formApiResponse.request().postDataJSON());
+    await assertRedirectionToCreateAccountPage(page);
 })
 
 test('should pass with all fields', async ({page, baseURL}) => {
@@ -79,6 +87,7 @@ test('should pass with all fields', async ({page, baseURL}) => {
 
     expect(formApiResponse.status()).toBe(200);
     assertApiRequest(dataToSend, formApiResponse.request().postDataJSON());
+    await assertRedirectionToCreateAccountPage(page);
 })
 
 function assertApiRequest(formData: GiftSubscriptionFormData, apiRequest: any) {
@@ -100,6 +109,12 @@ function assertApiRequest(formData: GiftSubscriptionFormData, apiRequest: any) {
         expect(apiRequest.variables.input.giftSubscriptionItem.recipient.date).toEqual(formData.dateToSend);}
 }
 
+async function assertRedirectionToCreateAccountPage(page: Page) {
+    await page.waitForSelector(`[data-testid="${femaleRadioButton}"]`);
+    const createAccountFormElement = await page.getByText(createAccountLabel);
+    expect(createAccountFormElement).toBeVisible();
+}
+
 function getFutureDate(days: number): string {
     const today = new Date();
     const futureDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + days);
@@ -110,5 +125,7 @@ function getFutureDate(days: number): string {
   
     return `${year}-${month}-${day}`;
   }
+
+  
 
 

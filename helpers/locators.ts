@@ -6,3 +6,4 @@ export const payButtonLabel = "PAY FOR YOUR ORDER";
 export const dateMonthLabel = "Month";
 export const dateDayLabel = "Day";
 export const dateYearLabel = "Year";
+export const createAccountLabel = "Create your account";

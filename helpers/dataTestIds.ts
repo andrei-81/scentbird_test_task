@@ -6,3 +6,4 @@ export const dateErrorTestId = "dateError";
 export const dateMonthTestId = "dateMonth";
 export const dateDayTestId = "dateDay";
 export const dateYearTestId = "dateYear";
+export const femaleRadioButton = "femaleGenderRadioButton"
