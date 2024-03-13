@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
 import { ScentType, SendDateTestId } from "../helpers/enums";
-import { dateDayLabel, dateMonthLabel, dateYearLabel, payButtonLabel, personalMessageLabel, recipientEmailLabel, recipientNameLabel, yourNameLabel } from "../helpers/locators";
-import { dateDayTestId, dateMonthTestId, dateYearTestId, recipientGenderRadioGroupTestId, sendDateRadioGroupTestId } from "../helpers/dataTestIds";
+import { payButtonLabel, personalMessageLabel, recipientEmailLabel, recipientNameLabel, yourNameLabel } from "../helpers/locators";
+import { dateDayTestId, dateMonthTestId, dateYearTestId } from "../helpers/dataTestIds";
 import { giftSubscriptionPageUrl } from "../helpers/urls";
 import { GiftSubscriptionFormData } from "../helpers/GiftSubscriptionFormData";
 
